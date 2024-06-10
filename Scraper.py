@@ -14,6 +14,6 @@ def parse_titles(page_content):
     return [title.get_text() for title in titles]
 
 def scrape_titles(url):
-    headers = {'User-Agent': 'Mozilla/5.0'}
+    headers = {'User-Agent': 'Microsoft Edge'}
     page_content = fetch_page(url, headers=headers)
     return parse_titles(page_content)
