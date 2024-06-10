@@ -1,6 +1,6 @@
 import requests
 
-url = 'https://example.com'
+url = 'https://infobae.com'
 response = requests.get(url)
 
 # Verifica si la solicitud fue exitosa
@@ -9,7 +9,7 @@ if response.status_code == 200:
 else:
     print(f'Error: {response.status_code}')
 
-from bs4 import Beutifulsoup
+from bs4 import Beautifulsoup
 
 soup = BeautifulSoup(page_content, 'html.parser')
 
@@ -30,7 +30,7 @@ options.headless = True  # Ejecuta el navegador en modo headless (sin interfaz g
 
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
-url = 'https://example.com'
+url = 'https://infobae.com'
 driver.get(url)
 
 # Espera a que el contenido cargue y luego encuentra los elementos necesarios
@@ -41,5 +41,5 @@ for title in titles:
 
 driver.quit()
 
-headers = {'User-Agent': 'Mozilla/5.0'}
+headers = {'User-Agent': 'Microsoft Edge'}
 response = requests.get(url, headers=headers)
