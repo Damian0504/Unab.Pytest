@@ -12,8 +12,8 @@ def test_fetch_page(monkeypatch):
 
     monkeypatch.setattr('requests.get', mock_get)
 
-    url = 'https://example.com'
-    headers = {'User-Agent': 'Mozilla/5.0'}
+    url = 'https://infobae.com'
+    headers = {'User-Agent': 'Microsoft Edge'}
     page_content = fetch_page(url, headers=headers)
     assert 'Test Title' in page_content
 
@@ -33,6 +33,6 @@ def test_scrape_titles(monkeypatch):
 
     monkeypatch.setattr('requests.get', mock_get)
 
-    url = 'https://example.com'
+    url = 'https://infobae.com'
     titles = scrape_titles(url)
     assert titles == ['Test Title']
