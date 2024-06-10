@@ -1,0 +1,191 @@
+﻿Web Scraper 
+
+
+
+
+Explicacion del codigo:
+
+
+import requests
+url = 'https://example.com'
+response = requests.get(url)
+
+
+if response.status_code == 200:
+    page_content = response.text
+else:
+    print(f'Error: {response.status_code}')
+
+
+Este código realiza una solicitud HTTP GET a una URL especificada (https://example.com) utilizando la biblioteca requests en Python. Luego, verifica si la solicitud fue exitosa comprobando el código de estado de la respuesta. Si la solicitud fue exitosa (es decir, el código de estado es 200), guarda el contenido de la página en la variable page_content. Si no, imprime un mensaje de error con el código de estado.
+* Import requests: Importa la biblioteca requests, que se utiliza para hacer solicitudes HTTP en Python.
+* Url = 'https://example.com': Define la variable url con la URL a la que se va a hacer la solicitud.
+* Response = requests.get(url): Realiza una solicitud HTTP GET a la URL especificada y guarda la respuesta en la variable response.
+* If response.status_code == 200:: Verifica si el código de estado de la respuesta es 200, lo que indica que la solicitud fue exitosa.
+* Page_content = response.text: Si la solicitud fue exitosa, guarda el contenido de la página (como una cadena de texto) en la variable page_content.
+* Else:: Si la solicitud no fue exitosa, ejecuta el siguiente bloque de código.
+* Print(f'Error: {response.status_code}'): Imprime un mensaje de error con el código de estado de la respuesta.
+
+
+from bs4 import Beautifulsoup
+
+
+soup = BeautifulSoup(page_content, 'html.parser')
+
+
+# Encuentra los datos que necesitas, por ejemplo, todos los títulos de artículos
+titles = soup.find_all('h2', class_='article-title')
+
+
+for title in titles:
+    print(title.get_text())
+        
+* From bs4 import BeautifulSoup: Importa la clase BeautifulSoup de la biblioteca bs4
+* Soup = BeautifulSoup(page_content, 'html.parser'): Crea una instancia de BeautifulSoup utilizando el contenido de la página (page_content) y el analizador HTML ('html.parser'). Esto convierte el contenido HTML en un objeto que se puede analizar y manipular.
+* Titles = soup.find_all('h2', class_='article-title'): Buscar todos los elementos <h2> con la clase CSS article-title en el contenido HTML y los guarda en la lista titles.
+* For title in titles:: Inicia un bucle for que itera sobre cada elemento en la lista titles.
+* Print(title.get_text()): Imprime el texto de cada título encontrado.
+
+
+Asegúrate de que la estructura HTML de la página web que estás analizando contiene elementos <h2> con la clase article-title.
+Si la página web utiliza JavaScript para cargar contenido dinámico, Requests y BeautifulSoup no podrán obtener el contenido cargado dinámicamente. En estos casos, podrías necesitar una herramienta como Selenium para automatizar un navegador web y capturar el contenido después de que se haya cargado por completo.
+
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
+
+
+options = Options()
+options.headless = True  # Ejecuta el navegador en modo headless (sin interfaz gráfica)
+
+
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+
+
+url = 'https://example.com'
+driver.get(url)
+titles = driver.find_elements(By.CLASS_NAME, 'article-title')
+for title in titles:
+    print(title.text)
+
+
+driver.quit()
+
+
+headers = {'User-Agent': 'Mozilla/5.0'}
+response = requests.get(url, headers=headers)
+
+
+Este código usa la biblioteca selenium para automatizar un navegador web (Google Chrome) y extraer información de una página web. A continuación, te explico en detalle lo que hace cada línea de código y cómo asegurarte de que funcione correctamente.
+
+
+* from selenium import webdriver: Importa el módulo webdriver de selenium, que se usa para controlar el navegador.
+* from selenium.webdriver.common.by import By: Importa la clase By de selenium.webdriver.common, que se usa para especificar métodos de localización de elementos.
+* from selenium.webdriver.chrome.service import Service: Importa Service para manejar el servicio del controlador de Chrome.
+* from selenium.webdriver.chrome.options import Options: Importa Options para configurar opciones del navegador Chrome.
+* from webdriver_manager.chrome import ChromeDriverManager: Importa ChromeDriverManager para gestionar la instalación del controlador de Chrome automáticamente.
+* options = Options(): Crea una instancia de Options para configurar el navegador.
+* options.headless = True: Configura el navegador para que se ejecute en modo headless (sin interfaz gráfica).
+* driver =webdriver.Chrome(service=Service(Chrome DriverManager().install()), options=options): Inicia una instancia del navegador Chrome en modo headless con el servicio del controlador gestionado por Chrome DriverManager.
+* url = 'https://example.com': Define la URL de la página web que se va a cargar.
+* driver.get(url): Abre la URL especificada en el navegador.
+* titles = driver.find_elements(By.CLASS_NAME, 'article-title'): Encuentra todos los elementos en la página con la clase article-title y los guarda en la lista titles.
+* for title in titles:: Itera sobre cada elemento en la lista titles.
+* print(title.text): Imprime el texto de cada título encontrado.
+* driver.quit(): Cierra el navegador y finaliza la sesión.
+* Headers = {'User-Agent': 'Mozilla/5.0'}: Define un diccionario de cabeceras para simular una solicitud desde un navegador.
+* response = requests.get(url, headers=headers): Realiza una solicitud HTTP GET a la URL especificada utilizando las cabeceras definidas.
+Modo headless: Ejecutar el navegador en modo headless es útil para automatizar tareas en servidores sin interfaz gráfica.
+Dependencias del sistema: Asegúrate de que tu sistema tenga instalado Google Chrome.
+Contenido dinámico: selenium es útil para manejar páginas web que cargan contenido dinámico con JavaScript, ya que simula un navegador completo.
+
+
+Pytest
+
+
+Explicacion del codigo de Pytest:
+
+
+import pytest
+from scraper import fetch_page, parse_titles
+
+
+def test_fetch_page(monkeypatch):
+    class MockResponse:
+        def __init__(self, text, status_code):
+            self.text = text
+            self.status_code = status_code
+
+
+    def mock_get(*args, **kwargs):
+        return MockResponse('<html><h2 class="article-title">Test Title</h2></html>',      200)
+
+
+    monkeypatch.setattr('requests.get', mock_get)
+
+
+    url = 'https://example.com'
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    page_content = fetch_page(url, headers=headers)
+    assert 'Test Title' in page_content
+
+
+def test_parse_titles():
+    html_content = '<html><h2 class="article-title">Test Title</h2></html>'
+    titles = parse_titles(html_content)
+    assert titles == ['Test Title']
+
+
+def test_scrape_titles(monkeypatch):
+    class MockResponse:
+        def __init__(self, text, status_code):
+            self.text = text
+            self.status_code = status_code
+
+
+    def mock_get(*args, **kwargs):
+        return MockResponse('<html><h2 class="article-title">Test Title</h2></html>', 200)
+
+
+    monkeypatch.setattr('requests.get', mock_get)
+
+
+    url = 'https://example.com'
+    titles = scrape_titles(url)
+    assert titles == ['Test Title']
+
+
+Este código es un conjunto de pruebas unitarias utilizando pytest para verificar el correcto funcionamiento de las funciones fetch_ page, parse_titles y scrape_titles del módulo scraper.
+* pytest: Biblioteca utilizada para escribir y ejecutar pruebas.
+* fetch_ page y parse_titles: Funciones que se están probando, importadas desde el módulo scraper.
+* Función test_fetch_page: Esta función prueba fetch_ page simulando una respuesta HTTP.
+* Clase MockResponse: Simula una respuesta HTTP con atributos text y status_code.
+* Función mock_get: Simula la función requests.get devolviendo una instancia de MockResponse.
+* monkeypatch.setattr: Reemplaza requests.get con mock_get para la prueba.
+* Prueba: Llama a fetch_ page con una URL y cabeceras simuladas.
+* Verifica que el contenido de la página contiene "Test Title".
+* Función test_parse_titles: Esta función prueba parse_titles con contenido HTML simulado.
+* Prueba: Llama a parse_titles con un contenido HTML simulado.
+* Verifica que la lista de títulos extraídos es ['Test Title'].
+* Función test_scrape_titles: Esta función prueba scrape_titles simulando la respuesta HTTP.
+* Clase MockResponse: Igual que en test_fetch_page, simula una respuesta HTTP.
+* Función mock_get: Igual que en test_fetch_page, simula requests.get.
+* monkeypatch.setattr: Igual que en test_fetch_page, reemplaza requests.get con mock_get.
+* Prueba: Llama a scrape_titles con una URL simulada.
+* Verifica que la lista de títulos extraídos es ['Test Title'].
+
+
+Cómo Funciona Mocking con monkeypatch:
+monkeypatch es una herramienta de pytest que permite modificar el comportamiento de funciones o atributos durante las pruebas.
+Aquí se usa para reemplazar requests.get con una función simulada mock_get, que devuelve un HTML predefinido.
+
+
+Ejecutar las Pruebas:
+Para ejecutar estas pruebas, asegúrate de tener pytest instalado y luego ejecuta pytest en la línea de comandos en el directorio donde se encuentra tu archivo de pruebas.
+pytest descubrirá automáticamente las funciones que comienzan con test y ejecutará las pruebas, proporcionando un reporte de los resultados.
+
+
+Este conjunto de pruebas garantiza que las funciones fetch_ page, parse_titles y scrape_titles funcionan correctamente bajo condiciones controladas.
