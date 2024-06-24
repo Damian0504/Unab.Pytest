@@ -33,7 +33,7 @@ from bs4 import Beautifulsoup
 soup = BeautifulSoup(page_content, 'html.parser')
 
 
-# Encuentra los datos que necesitas, por ejemplo, todos los títulos de artículos
+# Encuentra los datos que necesitamos, por ejemplo, todos los títulos de artículos
 titles = soup.find_all('h2', class_='article-title')
 
 
@@ -47,8 +47,8 @@ for title in titles:
 * Print(title.get_text()): Imprime el texto de cada título encontrado.
 
 
-Asegúrate de que la estructura HTML de la página web que estás analizando contiene elementos <h2> con la clase article-title.
-Si la página web utiliza JavaScript para cargar contenido dinámico, Requests y BeautifulSoup no podrán obtener el contenido cargado dinámicamente. En estos casos, podrías necesitar una herramienta como Selenium para automatizar un navegador web y capturar el contenido después de que se haya cargado por completo.
+Asegúrarse de que la estructura HTML de la página web que estás analizando contiene elementos <h2> con la clase article-title.
+Si la página web utiliza JavaScript para cargar contenido dinámico, Requests y BeautifulSoup no podrán obtener el contenido cargado dinámicamente. En estos casos, podrías necesitar una herramienta cromo Selenium para automatizar un navegador web y capturar el contenido después de que se haya cargado por completo.
 
 
 from selenium import webdriver
