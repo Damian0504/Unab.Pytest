@@ -1,45 +1,42 @@
 import requests
-
-url = 'https://infobae.com'
-response = requests.get(url)
-
-# Verifica si la solicitud fue exitosa
-if response.status_code == 200:
-    page_content = response.text
-else:
-    print(f'Error: {response.status_code}')
-
-from bs4 import Beautifulsoup
-
-soup = BeautifulSoup(page_content, 'html.parser')
-
-# Encuentra los datos que necesitas, por ejemplo, todos los títulos de artículos
-titles = soup.find_all('h2', class_='article-title')
-
-for title in titles:
-    print(title.get_text())
-
+from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 
-options = Options()
-options.headless = True  # Ejecuta el navegador en modo headless (sin interfaz gráfica)
+# Realiza la solicitud HTTP con requests
+url = 'https://infobae.com'
+response = requests.get(url)
 
+if response.status_code == 200:
+    page_content = response.text
+else:
+    print(f'Error: {response.status_code}')
+
+# Parsea el contenido con BeautifulSoup
+soup = BeautifulSoup(page_content, 'html.parser')
+titles = soup.find_all('h2', class_='article-title')
+
+for title in titles:
+    print(title.get_text())
+
+# Configura Selenium para ejecutar en modo headless
+options = Options()
+options.headless = True
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
-url = 'https://infobae.com'
+# Abre la página con Selenium
 driver.get(url)
 
-# Espera a que el contenido cargue y luego encuentra los elementos necesarios
+# Espera a que el contenido cargue completamente
+driver.implicitly_wait(10)  # Espera 10 segundos
+
+# Encuentra los elementos necesarios
 titles = driver.find_elements(By.CLASS_NAME, 'article-title')
 
 for title in titles:
     print(title.text)
 
 driver.quit()
-
-headers = {'User-Agent': 'Microsoft Edge'}
-response = requests.get(url, headers=headers)
