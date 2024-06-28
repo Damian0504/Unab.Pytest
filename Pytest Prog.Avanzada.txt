@@ -1,8 +1,4 @@
 ﻿Web Scraper 
-
-
-
-
 Explicacion del codigo:
 
 
@@ -75,7 +71,7 @@ for title in titles:
 driver.quit()
 
 
-headers = {'User-Agent': 'Mozilla/5.0'}
+headers = {'User-Agent': 'GoogleChrome'}
 response = requests.get(url, headers=headers)
 
 
@@ -105,83 +101,49 @@ Contenido dinámico: selenium es útil para manejar páginas web que cargan cont
 
 Pytest
 
-
 Explicacion del codigo de Pytest:
 
+import requests
+from bs4 import BeautifulSoup
 
-import pytest
-from scraper import fetch_page, parse_titles
+def fetch_page(url, headers):
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        return response.text
+    else:
+        print(f'Error: {response.status_code}')
+        return None
 
+def parse_titles(html_content):
+    soup = BeautifulSoup(html_content, 'html.parser')
+    titles = soup.find_all('h2', class_='article-title')
+    return [title.get_text() for title in titles]
 
-def test_fetch_page(monkeypatch):
-    class MockResponse:
-        def __init__(self, text, status_code):
-            self.text = text
-            self.status_code = status_code
-
-
-    def mock_get(*args, **kwargs):
-        return MockResponse('<html><h2 class="article-title">Test Title</h2></html>',      200)
-
-
-    monkeypatch.setattr('requests.get', mock_get)
-
-
-    url = 'https://example.com'
-    headers = {'User-Agent': 'Mozilla/5.0'}
+def scrape_titles(url):
+    headers = {'User-Agent': 'Microsoft Edge'}
     page_content = fetch_page(url, headers=headers)
-    assert 'Test Title' in page_content
+    if page_content:
+        return parse_titles(page_content)
+    else:
+        return []
 
-
-def test_parse_titles():
-    html_content = '<html><h2 class="article-title">Test Title</h2></html>'
-    titles = parse_titles(html_content)
-    assert titles == ['Test Title']
-
-
-def test_scrape_titles(monkeypatch):
-    class MockResponse:
-        def __init__(self, text, status_code):
-            self.text = text
-            self.status_code = status_code
-
-
-    def mock_get(*args, **kwargs):
-        return MockResponse('<html><h2 class="article-title">Test Title</h2></html>', 200)
-
-
-    monkeypatch.setattr('requests.get', mock_get)
-
-
-    url = 'https://example.com'
-    titles = scrape_titles(url)
-    assert titles == ['Test Title']
-
+infobae_url = 'https://infobae.com'
+titles = scrape_titles(infobae_url)
+for title in titles:
+    print(title)
 
 Este código es un conjunto de pruebas unitarias utilizando pytest para verificar el correcto funcionamiento de las funciones fetch_ page, parse_titles y scrape_titles del módulo scraper.
 * pytest: Biblioteca utilizada para escribir y ejecutar pruebas.
 * fetch_ page y parse_titles: Funciones que se están probando, importadas desde el módulo scraper.
 * Función test_fetch_page: Esta función prueba fetch_ page simulando una respuesta HTTP.
-* Clase MockResponse: Simula una respuesta HTTP con atributos text y status_code.
-* Función mock_get: Simula la función requests.get devolviendo una instancia de MockResponse.
-* monkeypatch.setattr: Reemplaza requests.get con mock_get para la prueba.
 * Prueba: Llama a fetch_ page con una URL y cabeceras simuladas.
 * Verifica que el contenido de la página contiene "Test Title".
 * Función test_parse_titles: Esta función prueba parse_titles con contenido HTML simulado.
 * Prueba: Llama a parse_titles con un contenido HTML simulado.
 * Verifica que la lista de títulos extraídos es ['Test Title'].
 * Función test_scrape_titles: Esta función prueba scrape_titles simulando la respuesta HTTP.
-* Clase MockResponse: Igual que en test_fetch_page, simula una respuesta HTTP.
-* Función mock_get: Igual que en test_fetch_page, simula requests.get.
-* monkeypatch.setattr: Igual que en test_fetch_page, reemplaza requests.get con mock_get.
 * Prueba: Llama a scrape_titles con una URL simulada.
 * Verifica que la lista de títulos extraídos es ['Test Title'].
-
-
-Cómo Funciona Mocking con monkeypatch:
-monkeypatch es una herramienta de pytest que permite modificar el comportamiento de funciones o atributos durante las pruebas.
-Aquí se usa para reemplazar requests.get con una función simulada mock_get, que devuelve un HTML predefinido.
-
 
 Ejecutar las Pruebas:
 Para ejecutar estas pruebas, asegúrate de tener pytest instalado y luego ejecuta pytest en la línea de comandos en el directorio donde se encuentra tu archivo de pruebas.
