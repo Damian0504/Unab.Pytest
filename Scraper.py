@@ -14,6 +14,11 @@ def parse_titles(page_content):
     return [title.get_text() for title in titles]
 
 def scrape_titles(url):
-    headers = {'User-Agent': 'Microsoft Edge'}
+    headers = {'User-Agent': 'GoogleChrome'}
     page_content = fetch_page(url, headers=headers)
     return parse_titles(page_content)
+
+infobae_url = 'https://infobae.com'
+titles = scrape_titles(infobae_url)
+for title in titles:
+    print(title)
