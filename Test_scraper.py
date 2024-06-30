@@ -1,28 +1,38 @@
+import pytest
 import requests
 from bs4 import BeautifulSoup
+from my_scraping_module import fetch_page, parse_titles, scrape_titles  
 
-def fetch_page(url, headers):
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        return response.text
-    else:
-        print(f'Error: {response.status_code}')
-        return None
-
-def parse_titles(html_content):
-    soup = BeautifulSoup(html_content, 'html.parser')
-    titles = soup.find_all('h2', class_='article-title')
-    return [title.get_text() for title in titles]
-
-def scrape_titles(url):
+def test_fetch_page_success(requests_mock):
+    url = 'https://infobae.com'
     headers = {'User-Agent': 'GoogleChrome'}
-    page_content = fetch_page(url, headers=headers)
-    if page_content:
-        return parse_titles(page_content)
-    else:
-        return []
+    mock_html = '<html><body><h2 class="article-title">Test Title</h2></body></html>'
+    requests_mock.get(url, text=mock_html)
 
-infobae_url = 'https://infobae.com'
-titles = scrape_titles(infobae_url)
-for title in titles:
-    print(title)
+    result = fetch_page(url, headers)
+    assert result == mock_html
+
+def test_fetch_page_error(requests_mock):
+    url = 'https://infobae.com'
+    headers = {'User-Agent': 'GoogleChrome'}
+    requests_mock.get(url, status_code=404)
+
+    with pytest.raises(Exception, match="Error: 404"):
+        fetch_page(url, headers)
+
+def test_parse_titles():
+    html_content = '<html><body><h2 class="article-title">Test Title 1</h2><h2 class="article-title">Test Title 2</h2></body></html>'
+    expected_titles = ['Test Title 1', 'Test Title 2']
+
+    titles = parse_titles(html_content)
+    assert titles == expected_titles
+
+def test_scrape_titles(requests_mock):
+    url = 'https://infobae.com'
+    headers = {'User-Agent': 'GoogleChrome'}
+    mock_html = '<html><body><h2 class="article-title">Test Title</h2></body></html>'
+    requests_mock.get(url, text=mock_html)
+
+    expected_titles = ['Test Title']
+    titles = scrape_titles(url)
+    assert titles == expected_titles
