@@ -1,4 +1,28 @@
-Test_scraping.py
+
+
+#Scraping.py
+
+import requests
+from bs4 import BeautifulSoup
+
+def fetch_page(url, headers=None, requests_module=requests):
+    response = requests_module.get(url, headers=headers)
+    if response.status_code == 200:
+        return response.text
+    else:
+        raise Exception(f'Error: {response.status_code}')
+
+def parse_titles(page_content):
+    soup = BeautifulSoup(page_content, 'html.parser')
+    titles = soup.find_all('h2', class_='article-title')
+    return [title.get_text() for title in titles]
+
+def scrape_titles(url, requests_module=requests):
+    headers = {'User-Agent': 'GoogleChrome'}
+    page_content = fetch_page(url, headers=headers, requests_module=requests_module)
+    return parse_titles(page_content)
+
+#Test_scraping.py
 
 import pytest
 import requests
@@ -39,7 +63,38 @@ def test_scrape_titles(requests_mock):
     titles = scrape_titles(url)
     assert titles == expected_titles
 
+#Explicacion del codigo Scraping.py
+
+Función fetch_page
+Propósito: Realiza una solicitud HTTP GET a una URL especificada y devuelve el contenido HTML de la página si la solicitud es exitosa.
+Parámetros:
+Url: La URL de la página web que se quiere recuperar.
+Headers: Un diccionario de encabezados HTTP para enviar con la solicitud.
+Funcionamiento:
+Realiza una solicitud GET a la URL usando requests.get.
+Si la solicitud es exitosa (código de estado 200), devuelve el contenido HTML de la página (response.text).
+Si la solicitud falla (cualquier código de estado diferente de 200), lanza una excepción con un mensaje de error e imprime un mensaje de error y devuelve None.
+
+Función parse_titles
+Propósito: Analiza el contenido HTML para extraer los títulos de los artículos.
+Parámetros: html_content: El contenido HTML de la página web.
+Funcionamiento: Crea un objeto BeautifulSoup para analizar el contenido HTML.
+Busca todos los elementos <h2> con la clase article-title.
+Extrae el texto de cada elemento encontrado y devuelve una lista de estos textos.
+
+Función scrape_titles
+Propósito: Orquestar el proceso de recuperación y análisis de títulos de artículos desde una URL específica.
+Parámetros: La URL de la página web que se quiere analizar.
+Funcionamiento: Define un diccionario de encabezados con un agente de usuario ('User-Agent': 'GoogleChrome').
+Llama a fetch_page para obtener el contenido HTML de la página.
+Si fetch_page devuelve contenido HTML válido:
+Llama a parse_titles para extraer los títulos de los artículos.
+Devuelve la lista de títulos.
+Si fetch_page devuelve None (scraping.py):
+Devuelve una lista vacía.
+
 #Explicacion del codigo: Test_scraping.py
+
 Beautifulsoup: Se importa BeautifulSoup desde el módulo bs4 para extraer datos de una pagina web y contenidos HTML.
 Pytest: Biblioteca utilizada para escribir y ejecutar pruebas.
 
