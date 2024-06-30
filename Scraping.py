@@ -1,8 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 
-def fetch_page(url, headers=None):
-    response = requests.get(url, headers=headers)
+def fetch_page(url, headers=None, requests_module=requests):
+    response = requests_module.get(url, headers=headers)
     if response.status_code == 200:
         return response.text
     else:
@@ -13,12 +13,7 @@ def parse_titles(page_content):
     titles = soup.find_all('h2', class_='article-title')
     return [title.get_text() for title in titles]
 
-def scrape_titles(url):
+def scrape_titles(url, requests_module=requests):
     headers = {'User-Agent': 'GoogleChrome'}
-    page_content = fetch_page(url, headers=headers)
+    page_content = fetch_page(url, headers=headers, requests_module=requests_module)
     return parse_titles(page_content)
-
-infobae_url = 'https://infobae.com'
-titles = scrape_titles(infobae_url)
-for title in titles:
-    print(title)
