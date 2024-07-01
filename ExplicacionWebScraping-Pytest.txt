@@ -128,6 +128,15 @@ For title in titles: Itera sobre los elementos encontrados.
 Print(title.text): Imprime el texto de cada título.
 Driver.quit(): Cierra el navegador y termina la sesión de WebDriver.
 
+Resumen
+Este código combina dos métodos diferentes para hacer web scraping:
+Usando requests y BeautifulSoup:
+Realiza una solicitud HTTP para obtener el contenido HTML de la página.
+Analiza el HTML y extrae los títulos de los artículos.
+Usando Selenium:
+Automatiza un navegador web (Chrome en este caso) para cargar la página.
+Extrae los títulos de los artículos utilizando métodos de localización de Selenium.
+Esto puede ser útil si la página tiene contenido dinámico cargado por JavaScript, que no sería visible con solo requests y BeautifulSoup
 
 #Explicacion del codigo Scraping.py
 
