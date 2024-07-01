@@ -1,4 +1,41 @@
+#WebScraping_Pytest.py
 
+import requests
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
+
+url = 'https://infobae.com'
+response = requests.get(url)
+
+if response.status_code == 200:
+    page_content = response.text
+else:
+    print(f'Error: {response.status_code}')
+
+soup = BeautifulSoup(page_content, 'html.parser')
+titles = soup.find_all('h2', class_='article-title')
+
+for title in titles:
+    print(title.get_text())
+
+options = Options()
+options.headless = True
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+
+driver.get(url)
+
+driver.implicitly_wait(10)  # Espera 10 segundos
+
+titles = driver.find_elements(By.CLASS_NAME, 'article-title')
+
+for title in titles:
+    print(title.text)
+
+driver.quit()
 
 #Scraping.py
 
@@ -62,6 +99,35 @@ def test_scrape_titles(requests_mock):
     expected_titles = ['Test Title']
     titles = scrape_titles(url)
     assert titles == expected_titles
+
+Explicacion del codigo WebScraping_Pytest.py
+
+Requests: Biblioteca para realizar solicitudes HTTP en Python.
+BeautifulSoup: Biblioteca para analizar documentos HTML y XML.
+Selenium.webdriver: Herramienta para automatizar navegadores web.
+By: Clase que permite especificar métodos de localización de elementos en Selenium.
+Service: Clase que permite manejar el servicio de ChromeDriver.
+Options: Clase que permite configurar opciones de ChromeDriver.
+Chrome DriverManager: Utilidad que gestiona la instalación del ChromeDriver.
+Url: Define la URL de la página web de Infobae.
+Requests.get(url): Realiza una solicitud GET a la URL.
+if response.status_code == 200: Verifica si la solicitud fue exitosa (código de estado 200).
+Page_content = response.text: Almacena el contenido HTML de la página si la solicitud fue exitosa.
+Else: Imprime un mensaje de error si la solicitud no fue exitosa.
+Soup = BeautifulSoup(page_content, 'html.parser'): Analiza el contenido HTML utilizando BeautifulSoup.
+Titles = soup.find_all('h2', class_='article-title'): Encuentra todos los elementos <h2> con la clase article-title.
+For title in titles: Itera sobre los elementos encontrados.
+Print(title.get_text()): Imprime el texto de cada título.
+Options = Options(): Crea un objeto de opciones para Chrome.
+Options.headless = True: Configura el navegador para que se ejecute en modo headless (sin interfaz gráfica).
+Driver=webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options): Configura y lanza una instancia de ChromeDriver utilizando webdriver_manager para manejar la instalación del driver.
+Driver.get(url): Navega a la URL especificada.
+Driver.implicitly_wait(10): Espera hasta 10 segundos para que los elementos se carguen antes de lanzar una excepción.
+Titles = driver.find_elements(By.CLASS_NAME, 'article-title'): Encuentra todos los elementos con la clase article-title en la página.
+For title in titles: Itera sobre los elementos encontrados.
+Print(title.text): Imprime el texto de cada título.
+Driver.quit(): Cierra el navegador y termina la sesión de WebDriver.
+
 
 #Explicacion del codigo Scraping.py
 
