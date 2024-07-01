@@ -1,7 +1,7 @@
 import pytest
 import requests
 from bs4 import BeautifulSoup
-from my_scraping_module import fetch_page, parse_titles, scrape_titles  
+from Scraping import fetch_page, parse_titles, scrape_titles  
 
 def test_fetch_page_success(requests_mock):
     url = 'https://infobae.com'
